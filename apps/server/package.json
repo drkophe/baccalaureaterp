@@ -5,12 +5,15 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "tsc -p ../../packages/shared/tsconfig.json",
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "pretypecheck": "tsc -p ../../packages/shared/tsconfig.json",
+    "pretest": "tsc -p ../../packages/shared/tsconfig.json"
   },
   "dependencies": {
     "@bacc/shared": "*",

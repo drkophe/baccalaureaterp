@@ -300,6 +300,32 @@ NEXT_PUBLIC_SERVER_URL=https://api.mon-domaine.fr \
 docker compose up --build -d
 ```
 
+### Vercel (front uniquement)
+
+Vercel peut héberger `apps/web`, **mais pas `apps/server`** : le serveur temps réel maintient
+des connexions WebSocket ouvertes, ce qu'une fonction serverless ne permet pas. Le serveur doit
+tourner sur une plateforme à processus long (Railway, Render, Fly.io, Scaleway, une VM…), avec
+un Redis à côté.
+
+Configuration du projet Vercel :
+
+| Réglage                  | Valeur                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| Root Directory           | `apps/web`                                                                           |
+| Install / Build Command  | valeurs par défaut (`npm install` / `npm run build`)                                 |
+| Variable d'environnement | `NEXT_PUBLIC_SERVER_URL` = URL publique du serveur, ex. `https://api.mon-domaine.fr` |
+
+`NEXT_PUBLIC_SERVER_URL` est lue **à la compilation** : après l'avoir modifiée, il faut
+redéployer, un simple redémarrage ne suffit pas.
+
+Côté serveur, `CORS_ORIGINS` doit lister le domaine Vercel (`https://mon-projet.vercel.app`,
+plus le domaine personnalisé s'il existe), sans quoi le navigateur refusera la connexion.
+
+> Le paquet `@bacc/shared` est publié sous forme compilée (`dist/`), qui n'est pas versionnée.
+> Les scripts `prebuild` de `apps/web` et `apps/server` le compilent donc automatiquement avant
+> leur propre build : un `npm run build` dans l'une ou l'autre app fonctionne depuis un clone
+> vierge, sans étape manuelle.
+
 ### Montée en charge
 
 L'état vit dans Redis et les messages transitent par l'adapter Redis de Socket.io : ajouter
