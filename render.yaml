@@ -6,6 +6,8 @@ services:
     runtime: node
     plan: free
     region: frankfurt
+    # Les paquets necessaires a la compilation sont declares en `dependencies`,
+    # donc `npm ci` suffit meme avec NODE_ENV=production.
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /health

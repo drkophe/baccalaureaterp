@@ -159,12 +159,31 @@ Trois modes, réglables par l'hôte avant le lancement.
 npm run dev         # serveur + front, rechargement a chaud
 npm test            # 97 tests (moteur, scoring, machine a etats, integration socket)
 npm run lint
-npm run typecheck   # front et serveur
+npm run typecheck   # front, serveur et tests
 ```
 
 Les tests d'intégration parlent au serveur comme un vrai navigateur (HTTP + WebSocket) :
 création, reconnexion avec token, refus d'un token invalide, payload malformé sans coupure
 de connexion, manche complète du tirage au score, transfert d'hôte.
+
+### Reproduire un build d'hébergeur avant de pousser
+
+Un build local passe avec toutes les dépendances installées, alors qu'un hébergeur
+installe généralement avec `NODE_ENV=production`, ce qui **omet les `devDependencies`**.
+Pour éprouver cette différence sans attendre un déploiement :
+
+```bash
+git clone . /tmp/verif && cd /tmp/verif
+NODE_ENV=production npm ci
+NODE_ENV=production npm run build
+NODE_ENV=production PORT=4500 npm start
+```
+
+C'est la raison pour laquelle tout ce qui est nécessaire à la compilation
+(TypeScript, Tailwind, PostCSS et les `@types` utilisés par le typecheck) est déclaré
+en `dependencies` et non en `devDependencies`, et pour laquelle `next build` ne lance
+pas ESLint : le lint a sa propre commande, et le build ne doit dépendre d'aucun outil
+absent d'une installation de production.
 
 ---
 

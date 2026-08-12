@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import type { Request, Response } from 'express';
 import next from 'next';
 import { loadConfig } from './src/server/config';
 import { createApiRouter } from './src/server/api';
@@ -38,7 +39,7 @@ async function main(): Promise<void> {
 
   // L'API du jeu passe en premier, tout le reste part au routeur Next.
   const app = createApiRouter(ctx);
-  app.use((req, res) => {
+  app.use((req: Request, res: Response) => {
     void handleNextRequest(req, res);
   });
 

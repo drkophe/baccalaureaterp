@@ -1,0 +1,10 @@
+{
+  // Projet dedie aux tests : ils ne sont pas livres, donc exclus du build de
+  // production, mais restent entierement type-verifies en developpement.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["vitest.config.ts", "**/*.test.ts", "src/server/test/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
