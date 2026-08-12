@@ -1,56 +1,14 @@
-# Blueprint Render : Redis + serveur temps reel + front.
-#
-# Utilisation : Render > New > Blueprint, puis pointer sur ce depot.
-# Les deux variables marquees `sync: false` sont demandees au moment du deploiement
-# (elles se croisent : chacune a besoin de l'URL de l'autre service).
-#
-# Root Directory reste vide : `npm ci` doit tourner a la racine du monorepo pour
-# que le workspace `@bacc/shared` soit lie aux deux applications.
-
+# Blueprint Render : un seul service, aucune variable a renseigner.
+# Render > New > Blueprint, puis pointer sur ce depot.
 services:
-  - type: keyvalue
-    name: bacc-redis
-    plan: free
-    region: frankfurt
-    maxmemoryPolicy: allkeys-lru
-    # Aucune IP publique : seuls les services Render de la meme region y accedent.
-    ipAllowList: []
-
   - type: web
-    name: bacc-server
+    name: baccalaureat
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: npm ci && npm run build -w @bacc/server
-    startCommand: npm start -w @bacc/server
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: bacc-redis
-          property: connectionString
-      - key: TRUST_PROXY
-        value: '1'
-      - key: LOG_LEVEL
-        value: info
-      # URL publique du front, ex. https://bacc-web.onrender.com
-      - key: CORS_ORIGINS
-        sync: false
-
-  - type: web
-    name: bacc-web
-    runtime: node
-    plan: free
-    region: frankfurt
-    buildCommand: npm ci && npm run build -w @bacc/web
-    startCommand: npm start -w @bacc/web
-    envVars:
-      - key: NODE_ENV
-        value: production
-      # URL publique du serveur, ex. https://bacc-server.onrender.com
-      # Lue a la COMPILATION : toute modification impose un redeploiement.
-      - key: NEXT_PUBLIC_SERVER_URL
-        sync: false

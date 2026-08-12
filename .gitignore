@@ -1,6 +1,5 @@
 node_modules/
 dist/
-build/
 .next/
 out/
 coverage/
@@ -11,9 +10,6 @@ coverage/
 .env.*.local
 
 npm-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
 .DS_Store
 .idea/
 .vscode/
